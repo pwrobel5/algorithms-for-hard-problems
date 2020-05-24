@@ -6,12 +6,10 @@
 #include <memory>
 
 class Vertex {
-private:
-    std::pair<int, int> coordinates;
-    std::set<std::shared_ptr<Vertex>> neighbours;
-
 public:
+    std::pair<int, int> coordinates;
     char type;
+    std::set<std::shared_ptr<Vertex>> neighbours;
 
     Vertex(std::pair<int, int> coordinates, char type);
 

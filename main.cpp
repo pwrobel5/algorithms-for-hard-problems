@@ -20,6 +20,8 @@ int main() {
     }
 
     Graph graph = Graph(park_width, park_height, park_map);
+    graph.include_minimal_distance(minimum_distance);
+    graph.print();
 
     return 0;
 }

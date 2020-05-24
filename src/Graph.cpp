@@ -86,3 +86,36 @@ void Graph::add_bottom_neighbour(std::pair<int, int> coordinates, const std::sha
         }
     }
 }
+
+void Graph::include_minimal_distance(int distance) {
+    for (const auto &element : vertices) {
+        for (const auto &neighbour : element.second->neighbours) {
+            traverse_neighbours(element.second, element.second, neighbour, distance);
+        }
+    }
+}
+
+void
+Graph::traverse_neighbours(const std::shared_ptr<Vertex> &base_vertex, const std::shared_ptr<Vertex> &previous_vertex,
+                           const std::shared_ptr<Vertex> &current_vertex, int count) {
+    if (count == 0)
+        return;
+
+    base_vertex->add_neighbour(current_vertex);
+    current_vertex->add_neighbour(base_vertex);
+
+    for (const auto &neighbour : current_vertex->neighbours) {
+        if (neighbour != previous_vertex)
+            traverse_neighbours(base_vertex, current_vertex, neighbour, count - 1);
+    }
+}
+
+void Graph::print() {
+    for (const auto &vertex : vertices) {
+        std::cout << vertex.first.first << ", " << vertex.first.second << std::endl;
+        auto neighbours = vertex.second->neighbours;
+        for (const auto &neighbour : neighbours) {
+            std::cout << "\t" << neighbour->coordinates.first << ", " << neighbour->coordinates.second << std::endl;
+        }
+    }
+}

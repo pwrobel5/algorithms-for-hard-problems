@@ -26,8 +26,15 @@ private:
 
     void add_bottom_neighbour(std::pair<int, int> coordinates, const std::shared_ptr<Vertex> &vertex_ptr);
 
+    void traverse_neighbours(const std::shared_ptr<Vertex> &base_vertex, const std::shared_ptr<Vertex> &previous_vertex,
+                             const std::shared_ptr<Vertex> &current_vertex, int count);
+
 public:
     Graph(int width, int height, const std::vector<std::string> &park_map);
+
+    void include_minimal_distance(int distance);
+
+    void print();
 };
 
 
