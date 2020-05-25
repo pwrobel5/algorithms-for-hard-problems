@@ -11,7 +11,7 @@ std::vector<char> Graph::matching_types_vertical = {
         '|', '+'
 };
 
-Graph::Graph(int width, int height, const std::vector<std::string> &park_map) {
+Graph::Graph(int width, int height, const std::vector<std::string> &park_map, int minimal_distance) {
     // decrement by 1 to have appropriate values to compare with vertex coordinates during finding edges
     this->width = width - 1;
     this->height = height - 1;
@@ -21,6 +21,7 @@ Graph::Graph(int width, int height, const std::vector<std::string> &park_map) {
     }
 
     add_edges();
+    include_minimal_distance(minimal_distance);
 }
 
 void Graph::parse_input_string(int index, std::string input_string) {
@@ -89,9 +90,14 @@ void Graph::add_bottom_neighbour(std::pair<int, int> coordinates, const std::sha
 
 void Graph::include_minimal_distance(int distance) {
     for (const auto &element : vertices) {
-        for (const auto &neighbour : element.second->neighbours) {
+        auto neighbours = element.second->neighbours;
+        for (const auto &neighbour : neighbours) {
             traverse_neighbours(element.second, element.second, neighbour, distance);
         }
+    }
+
+    for (const auto &element : vertices) {
+        element.second->merge_neighbours_sets();
     }
 }
 
@@ -101,8 +107,8 @@ Graph::traverse_neighbours(const std::shared_ptr<Vertex> &base_vertex, const std
     if (count == 0)
         return;
 
-    base_vertex->add_neighbour(current_vertex);
-    current_vertex->add_neighbour(base_vertex);
+    base_vertex->add_extra_neighbour(current_vertex);
+    current_vertex->add_extra_neighbour(base_vertex);
 
     for (const auto &neighbour : current_vertex->neighbours) {
         if (neighbour != previous_vertex)
@@ -110,12 +116,40 @@ Graph::traverse_neighbours(const std::shared_ptr<Vertex> &base_vertex, const std
     }
 }
 
-void Graph::print() {
+std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> Graph::get_edge_list() {
+    std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> result;
     for (const auto &vertex : vertices) {
-        std::cout << vertex.first.first << ", " << vertex.first.second << std::endl;
-        auto neighbours = vertex.second->neighbours;
-        for (const auto &neighbour : neighbours) {
-            std::cout << "\t" << neighbour->coordinates.first << ", " << neighbour->coordinates.second << std::endl;
+        std::pair<int, int> first_coordinates = vertex.first;
+
+        for (const auto &neighbour : vertex.second->neighbours) {
+            std::pair<int, int> second_coordinates = neighbour->coordinates;
+            if (first_coordinates < second_coordinates)
+                result.emplace_back(first_coordinates, second_coordinates);
         }
     }
+
+    return result;
 }
+
+int Graph::size() {
+    return vertices.size();
+}
+
+std::vector<std::shared_ptr<Vertex>> Graph::get_vertices() {
+    std::vector<std::shared_ptr<Vertex>> result;
+    for (const auto &element : vertices) {
+        result.push_back(element.second);
+    }
+
+    return result;
+}
+
+std::shared_ptr<Vertex> Graph::get_vertex(std::pair<int, int> coordinates) {
+    auto find_result = vertices.find(coordinates);
+
+    if (find_result != vertices.end())
+        return find_result->second;
+
+    return nullptr;
+}
+

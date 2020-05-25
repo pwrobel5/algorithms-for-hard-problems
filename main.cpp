@@ -2,6 +2,8 @@
 #include <vector>
 
 #include "src/Graph.h"
+#include "src/Solver.h"
+#include "src/NoSolutionException.h"
 
 int main() {
     int park_width, park_height, minimum_distance, people_number;
@@ -19,9 +21,14 @@ int main() {
         }
     }
 
-    Graph graph = Graph(park_width, park_height, park_map);
-    graph.include_minimal_distance(minimum_distance);
-    graph.print();
+    Graph graph = Graph(park_width, park_height, park_map, minimum_distance);
+    Solver solver = Solver(graph, people_number);
+
+    try {
+        solver.print_solution();
+    } catch (NoSolutionException &ex) {
+        std::cout << "No solution found!" << std::endl;
+    }
 
     return 0;
 }

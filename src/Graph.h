@@ -29,13 +29,18 @@ private:
     void traverse_neighbours(const std::shared_ptr<Vertex> &base_vertex, const std::shared_ptr<Vertex> &previous_vertex,
                              const std::shared_ptr<Vertex> &current_vertex, int count);
 
-public:
-    Graph(int width, int height, const std::vector<std::string> &park_map);
-
     void include_minimal_distance(int distance);
 
-    void print();
-};
+public:
+    Graph(int width, int height, const std::vector<std::string> &park_map, int minimal_distance);
 
+    int size();
+
+    std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> get_edge_list();
+
+    std::vector<std::shared_ptr<Vertex>> get_vertices();
+
+    std::shared_ptr<Vertex> get_vertex(std::pair<int, int> coordinates);
+};
 
 #endif
