@@ -21,18 +21,13 @@ int main() {
         }
     }
 
-    Graph graph = Graph(park_width, park_height, park_map, minimum_distance);
-    Solver solver = Solver(graph, people_number);
+    Graph graph(park_width, park_height, park_map, minimum_distance);
+    Solver solver = Solver(&graph, people_number);
 
     try {
         solver.print_solution();
     } catch (NoSolutionException &ex) {
         std::cout << "No solution found!" << std::endl;
-    }
-
-    auto vertices = graph.get_vertices();
-    for(auto vertex : vertices) {
-        delete vertex;
     }
 
     return 0;

@@ -8,14 +8,14 @@ class Vertex {
 public:
     std::pair<int, int> coordinates;
     char type;
-    std::set<Vertex*> neighbours;
-    std::set<Vertex*> extra_neighbours;
+    std::set<Vertex *> neighbours;
+    std::set<Vertex *> extra_neighbours;
 
     Vertex(std::pair<int, int> coordinates, char type);
 
-    void add_neighbour(Vertex* &neighbour);
+    void add_neighbour(Vertex *&neighbour);
 
-    void add_extra_neighbour(Vertex* &neighbour);
+    void add_extra_neighbour(Vertex *&neighbour);
 
     void merge_neighbours_sets();
 

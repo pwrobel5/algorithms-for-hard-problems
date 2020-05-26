@@ -6,16 +6,16 @@
 #include <iostream>
 
 
-Solver::Solver(Graph graph, int people_number) :
-        graph(std::move(graph)) {
+Solver::Solver(Graph *graph, int people_number) {
     this->people_number = people_number;
+    this->graph = graph;
 }
 
-std::set<Vertex*> Solver::find_vertex_cover(int size, std::set<Vertex*> &solution) {
+std::set<Vertex *> Solver::find_vertex_cover(int size, std::set<Vertex *> &solution) {
     if (size < 0)
         throw NoSolutionException();
 
-    auto edge_list = graph.get_edge_list();
+    auto edge_list = graph->get_edge_list();
     if (edge_list.empty()) {
         return solution;
     }
@@ -23,17 +23,17 @@ std::set<Vertex*> Solver::find_vertex_cover(int size, std::set<Vertex*> &solutio
         throw NoSolutionException();
     }
 
-    std::vector<Vertex*> vertices = graph.get_vertices();
-    std::vector<Vertex*> one_degrees;
+    std::vector<Vertex *> vertices = graph->get_vertices();
+    std::vector<Vertex *> one_degrees;
     std::copy_if(vertices.begin(), vertices.end(), std::back_inserter(one_degrees),
-                 [](const Vertex* vertex) { return vertex->get_degree() == 1; });
+                 [](const Vertex *vertex) { return vertex->get_degree() == 1; });
     std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> deleted_edges;
 
     while (!one_degrees.empty()) {
         auto current_vertex = one_degrees.back();
         one_degrees.pop_back();
 
-        Vertex* one_degree_neighbour = *(current_vertex->neighbours.begin());
+        Vertex *one_degree_neighbour = *(current_vertex->neighbours.begin());
         solution.insert(one_degree_neighbour);
         size--;
 
@@ -41,7 +41,7 @@ std::set<Vertex*> Solver::find_vertex_cover(int size, std::set<Vertex*> &solutio
         deleted_edges.reserve(deleted_edges.size() + new_deletes.size());
         deleted_edges.insert(deleted_edges.end(), new_deletes.begin(), new_deletes.end());
 
-        edge_list = graph.get_edge_list();
+        edge_list = graph->get_edge_list();
         if (edge_list.empty()) {
             return solution;
         }
@@ -53,15 +53,15 @@ std::set<Vertex*> Solver::find_vertex_cover(int size, std::set<Vertex*> &solutio
 
         one_degrees.clear();
         std::copy_if(vertices.begin(), vertices.end(), std::back_inserter(one_degrees),
-                     [](const Vertex* vertex) { return vertex->get_degree() == 1; });
+                     [](const Vertex *vertex) { return vertex->get_degree() == 1; });
     }
 
     std::sort(vertices.begin(), vertices.end(),
-              [](const Vertex* lhs, const Vertex* rhs) {
+              [](const Vertex *lhs, const Vertex *rhs) {
                   return lhs->get_degree() > rhs->get_degree();
               });
 
-    Vertex* current_vertex = vertices[0];
+    Vertex *current_vertex = vertices[0];
     auto new_deletes = remove_vertex(current_vertex);
     solution.insert(current_vertex);
 
@@ -94,7 +94,7 @@ std::set<Vertex*> Solver::find_vertex_cover(int size, std::set<Vertex*> &solutio
 }
 
 std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>
-Solver::remove_vertex(Vertex* vertex) {
+Solver::remove_vertex(Vertex *vertex) {
     std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> deleted_edges;
 
     auto neighbours_copy = vertex->neighbours;
@@ -112,8 +112,8 @@ Solver::remove_vertex(Vertex* vertex) {
 
 void Solver::restore_graph(const std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> &deleted_edges) {
     for (const auto &edge : deleted_edges) {
-        auto first_vertex = graph.get_vertex(edge.first);
-        auto second_vertex = graph.get_vertex(edge.second);
+        auto first_vertex = graph->get_vertex(edge.first);
+        auto second_vertex = graph->get_vertex(edge.second);
 
         if (first_vertex == nullptr || second_vertex == nullptr)
             throw NoSolutionException();
@@ -123,13 +123,13 @@ void Solver::restore_graph(const std::vector<std::pair<std::pair<int, int>, std:
     }
 }
 
-std::set<Vertex*> Solver::find_independent_set() {
-    std::set<Vertex*> vertex_cover_solution{};
-    find_vertex_cover(graph.size() - people_number, vertex_cover_solution);
+std::set<Vertex *> Solver::find_independent_set() {
+    std::set<Vertex *> vertex_cover_solution{};
+    find_vertex_cover(graph->size() - people_number, vertex_cover_solution);
 
-    std::vector<Vertex*> vertices = graph.get_vertices();
+    std::vector<Vertex *> vertices = graph->get_vertices();
 
-    std::set<Vertex*> result{};
+    std::set<Vertex *> result{};
     for (const auto &vertex : vertices) {
         if (vertex_cover_solution.find(vertex) == vertex_cover_solution.end())
             result.insert(vertex);

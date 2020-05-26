@@ -5,11 +5,11 @@ Vertex::Vertex(std::pair<int, int> coordinates, char type) {
     this->type = type;
 }
 
-void Vertex::add_neighbour(Vertex* &neighbour) {
+void Vertex::add_neighbour(Vertex *&neighbour) {
     neighbours.insert(neighbour);
 }
 
-void Vertex::add_extra_neighbour(Vertex* &neighbour) {
+void Vertex::add_extra_neighbour(Vertex *&neighbour) {
     extra_neighbours.insert(neighbour);
 
 }

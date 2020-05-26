@@ -28,8 +28,7 @@ void Graph::parse_input_string(int index, std::string input_string) {
     for (std::size_t i = 0; i < input_string.size(); i++) {
         if (input_string[i] != no_vertex_sign) {
             std::pair<int, int> coordinates = std::pair<int, int>(index, i);
-            auto* vertex = new Vertex(coordinates, input_string[i]);
-            vertices.insert(std::pair<std::pair<int, int>, Vertex*>(coordinates, vertex));
+            vertices[coordinates] = std::unique_ptr<Vertex>(new Vertex(coordinates, input_string[i]));
         }
     }
 }
@@ -39,7 +38,7 @@ void Graph::add_edges() {
     // so there is not need to sort it again
     for (const auto &element : vertices) {
         std::pair<int, int> coordinates = element.first;
-        Vertex* vertex_ptr = element.second;
+        Vertex *vertex_ptr = element.second.get();
         char vertex_type = vertex_ptr->type;
 
         switch (vertex_type) {
@@ -60,11 +59,11 @@ void Graph::add_edges() {
     }
 }
 
-void Graph::add_right_neighbour(std::pair<int, int> coordinates, Vertex* vertex_ptr) {
+void Graph::add_right_neighbour(std::pair<int, int> coordinates, Vertex *vertex_ptr) {
     if (coordinates.second < width) {
         auto it = vertices.find(std::pair<int, int>(coordinates.first, coordinates.second + 1));
         if (it != vertices.end()) {
-            Vertex* neighbour = it->second;
+            Vertex *neighbour = it->second.get();
             if (std::find(matching_types_horizontal.begin(), matching_types_horizontal.end(), neighbour->type) !=
                 matching_types_horizontal.end()) {
                 vertex_ptr->add_neighbour(neighbour);
@@ -74,11 +73,11 @@ void Graph::add_right_neighbour(std::pair<int, int> coordinates, Vertex* vertex_
     }
 }
 
-void Graph::add_bottom_neighbour(std::pair<int, int> coordinates, Vertex* vertex_ptr) {
+void Graph::add_bottom_neighbour(std::pair<int, int> coordinates, Vertex *vertex_ptr) {
     if (coordinates.first < height) {
         auto it = vertices.find(std::pair<int, int>(coordinates.first + 1, coordinates.second));
         if (it != vertices.end()) {
-            Vertex* neighbour = it->second;
+            Vertex *neighbour = it->second.get();
             if (std::find(matching_types_vertical.begin(), matching_types_vertical.end(), neighbour->type) !=
                 matching_types_vertical.end()) {
                 vertex_ptr->add_neighbour(neighbour);
@@ -92,7 +91,7 @@ void Graph::include_minimal_distance(int distance) {
     for (const auto &element : vertices) {
         auto neighbours = element.second->neighbours;
         for (const auto &neighbour : neighbours) {
-            traverse_neighbours(element.second, element.second, neighbour, distance);
+            traverse_neighbours(element.second.get(), element.second.get(), neighbour, distance);
         }
     }
 
@@ -101,7 +100,7 @@ void Graph::include_minimal_distance(int distance) {
     }
 }
 
-void Graph::traverse_neighbours(Vertex* base_vertex, Vertex* previous_vertex, Vertex* current_vertex, int count) {
+void Graph::traverse_neighbours(Vertex *base_vertex, Vertex *previous_vertex, Vertex *current_vertex, int count) {
     if (count == 0)
         return;
 
@@ -133,20 +132,20 @@ int Graph::size() {
     return vertices.size();
 }
 
-std::vector<Vertex*> Graph::get_vertices() {
-    std::vector<Vertex*> result;
+std::vector<Vertex *> Graph::get_vertices() {
+    std::vector<Vertex *> result;
     for (const auto &element : vertices) {
-        result.push_back(element.second);
+        result.push_back(element.second.get());
     }
 
     return result;
 }
 
-Vertex* Graph::get_vertex(std::pair<int, int> coordinates) {
+Vertex *Graph::get_vertex(std::pair<int, int> coordinates) {
     auto find_result = vertices.find(coordinates);
 
     if (find_result != vertices.end())
-        return find_result->second;
+        return find_result->second.get();
 
     return nullptr;
 }

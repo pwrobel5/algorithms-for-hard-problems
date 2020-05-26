@@ -5,20 +5,20 @@
 
 class Solver {
 private:
-    Graph graph;
+    Graph *graph;
     int people_number;
 
     static std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>
-    remove_vertex(Vertex* vertex);
+    remove_vertex(Vertex *vertex);
 
     void restore_graph(const std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> &deleted_edges);
 
-    std::set<Vertex*> find_vertex_cover(int size, std::set<Vertex*> &solution);
+    std::set<Vertex *> find_vertex_cover(int size, std::set<Vertex *> &solution);
 
-    std::set<Vertex*> find_independent_set();
+    std::set<Vertex *> find_independent_set();
 
 public:
-    Solver(Graph graph, int people_number);
+    Solver(Graph *graph, int people_number);
 
     void print_solution();
 };
