@@ -30,5 +30,10 @@ int main() {
         std::cout << "No solution found!" << std::endl;
     }
 
+    auto vertices = graph.get_vertices();
+    for(auto vertex : vertices) {
+        delete vertex;
+    }
+
     return 0;
 }

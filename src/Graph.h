@@ -16,18 +16,17 @@ private:
 
     int width;
     int height;
-    std::map<std::pair<int, int>, std::shared_ptr<Vertex>> vertices;
+    std::map<std::pair<int, int>, Vertex*> vertices;
 
     void parse_input_string(int index, std::string input_string);
 
     void add_edges();
 
-    void add_right_neighbour(std::pair<int, int> coordinates, const std::shared_ptr<Vertex> &vertex_ptr);
+    void add_right_neighbour(std::pair<int, int> coordinates, Vertex *vertex_ptr);
 
-    void add_bottom_neighbour(std::pair<int, int> coordinates, const std::shared_ptr<Vertex> &vertex_ptr);
+    void add_bottom_neighbour(std::pair<int, int> coordinates, Vertex* vertex_ptr);
 
-    void traverse_neighbours(const std::shared_ptr<Vertex> &base_vertex, const std::shared_ptr<Vertex> &previous_vertex,
-                             const std::shared_ptr<Vertex> &current_vertex, int count);
+    void traverse_neighbours(Vertex* base_vertex, Vertex* previous_vertex, Vertex* current_vertex, int count);
 
     void include_minimal_distance(int distance);
 
@@ -38,9 +37,9 @@ public:
 
     std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> get_edge_list();
 
-    std::vector<std::shared_ptr<Vertex>> get_vertices();
+    std::vector<Vertex*> get_vertices();
 
-    std::shared_ptr<Vertex> get_vertex(std::pair<int, int> coordinates);
+    Vertex* get_vertex(std::pair<int, int> coordinates);
 };
 
 #endif

@@ -9,13 +9,13 @@ private:
     int people_number;
 
     static std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>
-    remove_vertex(const std::shared_ptr<Vertex> &vertex);
+    remove_vertex(Vertex* vertex);
 
     void restore_graph(const std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> &deleted_edges);
 
-    std::set<std::shared_ptr<Vertex>> find_vertex_cover(int size, std::set<std::shared_ptr<Vertex>> &solution);
+    std::set<Vertex*> find_vertex_cover(int size, std::set<Vertex*> &solution);
 
-    std::set<std::shared_ptr<Vertex>> find_independent_set();
+    std::set<Vertex*> find_independent_set();
 
 public:
     Solver(Graph graph, int people_number);
