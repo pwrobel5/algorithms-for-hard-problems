@@ -10,7 +10,8 @@ void Vertex::add_neighbour(Vertex *&neighbour) {
 }
 
 void Vertex::add_extra_neighbour(Vertex *&neighbour) {
-    extra_neighbours.insert(neighbour);
+    if (neighbours.find(neighbour) == neighbours.end())
+        extra_neighbours.insert(neighbour);
 
 }
 

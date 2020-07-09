@@ -7,6 +7,7 @@ class Solver {
 private:
     Graph *graph;
     int people_number;
+    std::vector<Vertex *> vertices;
 
     static std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>
     remove_vertex(Vertex *vertex);
