@@ -20,7 +20,6 @@ Graph::Graph(int width, int height, const std::vector<std::string> &park_map, in
         parse_input_string(i, park_map[i]);
     }
 
-    add_edges();
     include_minimal_distance(minimal_distance);
 }
 
@@ -88,6 +87,11 @@ void Graph::add_bottom_neighbour(std::pair<int, int> coordinates, Vertex *vertex
 }
 
 void Graph::include_minimal_distance(int distance) {
+    if (distance == 0) return;
+
+    add_edges();
+    if (distance == 1) return;
+
     for (const auto &element : vertices) {
         auto neighbours = element.second->neighbours;
         for (const auto &neighbour : neighbours) {
