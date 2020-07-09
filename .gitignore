@@ -49,3 +49,7 @@ _deps
 ### CLion files
 *.cbp
 .idea/
+
+all.*
+tests/
+run_tests.sh

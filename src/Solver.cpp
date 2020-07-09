@@ -148,7 +148,7 @@ void Solver::print_solution() {
     // not iterating to the end of the set in case if found solution is bigger than desired
     for (auto it = solution.begin(); elements_counter < people_number; it++) {
         auto coordinates = (*it)->coordinates;
-        std::cout << coordinates.second << " " << coordinates.first << std::endl;
+        std::cout << coordinates.first << " " << coordinates.second << std::endl;
         elements_counter++;
     }
 }

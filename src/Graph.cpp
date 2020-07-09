@@ -26,15 +26,33 @@ Graph::Graph(int width, int height, const std::vector<std::string> &park_map, in
 void Graph::parse_input_string(int index, std::string input_string) {
     for (std::size_t i = 0; i < input_string.size(); i++) {
         if (input_string[i] != no_vertex_sign) {
-            std::pair<int, int> coordinates = std::pair<int, int>(index, i);
+            std::pair<int, int> coordinates = std::pair<int, int>(i, index);
             vertices[coordinates] = std::unique_ptr<Vertex>(new Vertex(coordinates, input_string[i]));
         }
     }
 }
 
+void Graph::include_minimal_distance(int distance) {
+    if (distance == 0) return;
+
+    add_edges();
+    if (distance == 1) return;
+
+    for (const auto &element : vertices) {
+        auto neighbours = element.second->neighbours;
+        for (const auto &neighbour : neighbours) {
+            traverse_neighbours(element.second.get(), element.second.get(), neighbour, distance);
+        }
+    }
+
+    for (const auto &element : vertices) {
+        element.second->merge_neighbours_sets();
+    }
+}
+
 void Graph::add_edges() {
     // elements in std::map are already sorted by values stored in std::pairs
-    // so there is not need to sort it again
+    // so there is no need to sort it again
     for (const auto &element : vertices) {
         std::pair<int, int> coordinates = element.first;
         Vertex *vertex_ptr = element.second.get();
@@ -59,8 +77,8 @@ void Graph::add_edges() {
 }
 
 void Graph::add_right_neighbour(std::pair<int, int> coordinates, Vertex *vertex_ptr) {
-    if (coordinates.second < width) {
-        auto it = vertices.find(std::pair<int, int>(coordinates.first, coordinates.second + 1));
+    if (coordinates.first < width) {
+        auto it = vertices.find(std::pair<int, int>(coordinates.first + 1, coordinates.second));
         if (it != vertices.end()) {
             Vertex *neighbour = it->second.get();
             if (std::find(matching_types_horizontal.begin(), matching_types_horizontal.end(), neighbour->type) !=
@@ -73,8 +91,8 @@ void Graph::add_right_neighbour(std::pair<int, int> coordinates, Vertex *vertex_
 }
 
 void Graph::add_bottom_neighbour(std::pair<int, int> coordinates, Vertex *vertex_ptr) {
-    if (coordinates.first < height) {
-        auto it = vertices.find(std::pair<int, int>(coordinates.first + 1, coordinates.second));
+    if (coordinates.second < height) {
+        auto it = vertices.find(std::pair<int, int>(coordinates.first, coordinates.second + 1));
         if (it != vertices.end()) {
             Vertex *neighbour = it->second.get();
             if (std::find(matching_types_vertical.begin(), matching_types_vertical.end(), neighbour->type) !=
@@ -83,24 +101,6 @@ void Graph::add_bottom_neighbour(std::pair<int, int> coordinates, Vertex *vertex
                 neighbour->add_neighbour(vertex_ptr);
             }
         }
-    }
-}
-
-void Graph::include_minimal_distance(int distance) {
-    if (distance == 0) return;
-
-    add_edges();
-    if (distance == 1) return;
-
-    for (const auto &element : vertices) {
-        auto neighbours = element.second->neighbours;
-        for (const auto &neighbour : neighbours) {
-            traverse_neighbours(element.second.get(), element.second.get(), neighbour, distance);
-        }
-    }
-
-    for (const auto &element : vertices) {
-        element.second->merge_neighbours_sets();
     }
 }
 
